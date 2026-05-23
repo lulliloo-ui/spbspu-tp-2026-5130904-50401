@@ -16,7 +16,7 @@ namespace madieva {
 
   struct DelimiterIO
   {
-    char exp;
+    char expc;
   };
 
   struct DoubleIO
@@ -39,19 +39,19 @@ namespace madieva {
     std::string exp;
   };
 
-  std::istream& operator>>(std::istream& in, DelimiterIO&& dest);
-  std::istream& operator>>(std::istream& in, DoubleIO&& dest);
-  std::istream& operator>>(std::istream& in, ULLIO&& dest);
-  std::istream& operator>>(std::istream& in, StringIO&& dest);
-  std::istream& operator>>(std::istream& in, LabelIO&& dest);
-  std::istream& operator>>(std::istream& in, DataStruct& dest);
+  std::istream & operator>>(std::istream & in, DelimiterIO && dest);
+  std::istream & operator>>(std::istream & in, DoubleIO && dest);
+  std::istream & operator>>(std::istream & in, ULLIO && dest);
+  std::istream & operator>>(std::istream & in, StringIO && dest);
+  std::istream & operator>>(std::istream & in, LabelIO && dest);
+  std::istream & operator>>(std::istream & in, DataStruct & dest);
 
-  std::ostream& operator<<(std::ostream& out, const DataStruct& src);
+  std::ostream & operator<<(std::ostream & out, const DataStruct & src);
 
   class IOguard
   {
   public:
-    explicit IOguard(std::basic_ios< char >& s);
+    explicit IOguard(std::basic_ios< char > & s);
     ~IOguard();
   private:
     std::basic_ios< char >& s_;
@@ -61,7 +61,83 @@ namespace madieva {
     char fill_;
   };
 
+  std::istream & operator>>(std::istream & in, DelimiterIO && dest)
+  {
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+      return in;
+    }
+    char c = ' ';
+    in >> c;
+    if (in && (c != dest.expc)) {
+      in.setstate(std::ios::failbit);
+    }
+    return in;
+  }
 
+  std::istream & operator>>(std::istream & in, DoubleIO && dest)
+  {
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+      return in;
+    }
+    in >> dest.ref;
+    if (!in) {
+      return in;
+    }
+    char suffix = ' ';
+    in >> suffix;
+    if (suffix != 'd' && suffix != 'D') {
+      in.setstate(std::ios::failbit);
+    }
+    return in;
+  }
+
+  std::istream & operator>>(std::istream & in, ULLIO && dest)
+  {
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+      return in;
+    }
+    in >> dest.ref;
+    if (!in) {
+      return in;
+    }
+    char c1 = ' ', c2 = ' ', c3 = ' ';
+    in >> c1 >> c2 >> c3;
+
+    bool valid = ((c1 == 'u' || c1 == 'U') &&
+      (c2 == 'l' || c2 == 'L') &&
+      (c3 == 'l' || c3 == 'L'));
+
+    if (!valid) {
+      in.setstate(std::ios::failbit);
+    }
+    return in;
+  }
+
+  std::istream& madieva::operator>>(std::istream& in, StringIO&& dest)
+  {
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+      return in;
+    }
+    return std::getline(in >> DelimiterIO{'"'}, dest.ref, '"');
+  }
+
+  std::istream & operator>>(std::istream & in, LabelIO && dest)
+  {
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+      return in;
+    }
+    std::string word = "";
+    in >> word;
+    if (in && (word != dest.exp)) {
+      in.setstate(std::ios::failbit);
+    }
+    return in;
+  }
 
 
 
