@@ -139,7 +139,82 @@ namespace madieva {
     return in;
   }
 
+  std::istream & operator>>(std::istream & in, DataStruct & dest)
+  {
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+      return in;
+    }
 
+    double k1 = 0;
+    unsigned long long k2 = 0;
+    std::string k3 = "";
+    std::string key;
+
+    bool have1 = false, have2 = false, have3 = false;
+
+    in >> DelimiterIO{'('};
+    for (int i = 0; i < 3; ++i) {
+      in >> DelimiterIO{':'};
+      in >> key;
+      in >> DelimiterIO{' '};
+      if (key == "key1") {
+        in >> DoubleIO{k1};
+        have1 = true;
+      } else if (key == "key2") {
+        in >> ULLIO{k2};
+        have2 = true;
+      } else if (key == "key3") {
+        in >> StringIO{k3};
+        have3 = true;
+      } else {
+        in.setstate(std::ios::failbit);
+        return in;
+      }
+      in >> DelimiterIO{':'};
+    }
+    in >> DelimiterIO{')'};
+    if (have1 && have2 && have3) {
+      dest.key1 = k1;
+      dest.key2 = k2;
+      dest.key3 = k3;
+    } else {
+      in.setstate(std::ios::failbit);
+    }
+    return in;
+  }
+
+  std::ostream& madieva::operator<<(std::ostream& out, const DataStruct& src)
+  {
+    std::ostream::sentry sentry(out);
+    if (!sentry) {
+        return out;
+    }
+
+    IOguard guard(out);
+    
+    out << "(:key1 " << std::fixed << std::setprecision(1) << src.key1 << "d";
+    out << ":key2 " << src.key2 << "ull";
+    out << ":key3 \"" << src.key3 << "\":)";
+    return out;
+  }
+
+
+  madieva::IOguard::IOguard(std::basic_ios<char>& s) :
+    s_(s),
+    width_(s.width()),
+    precision_(s.precision()),
+    fmt_(s.flags()),
+    fill_(s.fill())
+{}
+
+  madieva::IOguard::~IOguard()
+  {
+    s_.width(width_);
+    s_.precision(precision_);
+    s_.flags(fmt_);
+    s_.fill(fill_);
+  }
 
 }
 
@@ -147,4 +222,17 @@ namespace madieva {
 
 
 int main()
-{}
+{
+  using namespace madieva;
+    std::string test = "(:key2 42ull:key1 3.14d:key3 \"hello\":)";
+    std::istringstream iss(test);
+    DataStruct ds;
+    iss >> ds;
+    if (iss) {
+        std::cout << ds << std::endl;
+    } else {
+        std::cout << "Ошибка чтения" << std::endl;
+    }
+
+
+}
