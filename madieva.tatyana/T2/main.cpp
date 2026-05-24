@@ -5,6 +5,7 @@
 #include <iterator>
 #include <vector>
 #include <iomanip>
+#include <limits>
 
 namespace madieva {
   struct DataStruct
@@ -12,6 +13,7 @@ namespace madieva {
     double key1;
     unsigned long long key2;
     std::string key3;
+    bool operator<(const DataStruct& rhs) const;
   };
 
   struct DelimiterIO
@@ -60,6 +62,17 @@ namespace madieva {
     std::basic_ios< char >::fmtflags fmt_;
     char fill_;
   };
+
+  bool DataStruct::operator<(const DataStruct& rhs) const
+  {
+    if (key1 != rhs.key1) {
+      return key1 < rhs.key1;
+    }
+    if (key2 != rhs.key2) {
+      return key2 < rhs.key2;
+    }
+    return key3.length() < rhs.key3.length();
+  }
 
   std::istream & operator>>(std::istream & in, DelimiterIO && dest)
   {
@@ -116,7 +129,7 @@ namespace madieva {
     return in;
   }
 
-  std::istream& madieva::operator>>(std::istream& in, StringIO&& dest)
+  std::istream & operator>>(std::istream & in, StringIO && dest)
   {
     std::istream::sentry sentry(in);
     if (!sentry) {
@@ -154,19 +167,18 @@ namespace madieva {
     bool have1 = false, have2 = false, have3 = false;
 
     in >> DelimiterIO{'('};
-    for (int i = 0; i < 3; ++i) {
-      in >> DelimiterIO{':'};
+    in >> DelimiterIO{':'};
+    for (int i = 0; i < 3 && in; ++i) {
       in >> key;
-      in >> DelimiterIO{' '};
       if (key == "key1") {
         in >> DoubleIO{k1};
-        have1 = true;
+        if (in) have1 = true;
       } else if (key == "key2") {
         in >> ULLIO{k2};
-        have2 = true;
+        if (in) have2 = true;
       } else if (key == "key3") {
         in >> StringIO{k3};
-        have3 = true;
+        if (in) have3 = true;
       } else {
         in.setstate(std::ios::failbit);
         return in;
@@ -181,34 +193,37 @@ namespace madieva {
     } else {
       in.setstate(std::ios::failbit);
     }
+    if (!in) {
+      in.clear();
+      in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      return in >> dest;
+    }
     return in;
   }
 
-  std::ostream& madieva::operator<<(std::ostream& out, const DataStruct& src)
+  std::ostream & operator<<(std::ostream  & out, const DataStruct & src)
   {
     std::ostream::sentry sentry(out);
     if (!sentry) {
-        return out;
+      return out;
     }
 
     IOguard guard(out);
-    
     out << "(:key1 " << std::fixed << std::setprecision(1) << src.key1 << "d";
     out << ":key2 " << src.key2 << "ull";
     out << ":key3 \"" << src.key3 << "\":)";
     return out;
   }
 
-
-  madieva::IOguard::IOguard(std::basic_ios<char>& s) :
+  IOguard::IOguard(std::basic_ios< char > & s) :
     s_(s),
     width_(s.width()),
     precision_(s.precision()),
     fmt_(s.flags()),
     fill_(s.fill())
-{}
+  {}
 
-  madieva::IOguard::~IOguard()
+  IOguard::~IOguard()
   {
     s_.width(width_);
     s_.precision(precision_);
@@ -223,16 +238,19 @@ namespace madieva {
 
 int main()
 {
-  using namespace madieva;
-    std::string test = "(:key2 42ull:key1 3.14d:key3 \"hello\":)";
-    std::istringstream iss(test);
-    DataStruct ds;
-    iss >> ds;
-    if (iss) {
-        std::cout << ds << std::endl;
-    } else {
-        std::cout << "Ошибка чтения" << std::endl;
-    }
+  using madieva::DataStruct;
+  using T = DataStruct;
+  std::vector< T > data;
+  using iit_t = std::istream_iterator< T >;
+
+  // std::string test = "(:key2 42ull:key1 3.14d:key3 \"hello\":)";
+  // std::istringstream iss(test);
+  // DataStruct ds;
+
+  std::copy(iit_t{std::cin}, iit_t{}, std::back_inserter(data));
+  using oit_t = std::ostream_iterator< DataStruct >;
+  std::copy(std::begin(data), std::end(data), oit_t{std::cout, "\n"});
+
 
 
 }
