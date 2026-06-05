@@ -33,27 +33,28 @@ namespace madieva
     return std::abs(sum) / 2.0;
   }
 
-  void even_odd_num_filter(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons, std::string param, std::vector<Polygon> & filtered)
+  void even_odd_num_filter(std::istream & in, std::ostream & out,
+    const std::vector< Polygon > & polygons,std::string param,
+    std::vector<Polygon> & filtered)
   {
     if (param == "EVEN") {
-      std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered), 
+      std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered),
       [](const Polygon & p) {
         return p.points.size() % 2 == 0;
       });
     } else if (param == "ODD") {
-      std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered), 
+      std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered),
       [](const Polygon & p) {
         return p.points.size() % 2 != 0;
       });
     } else {
       try {
         size_t vertex = std::stoul(param);
-        std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered), 
+        std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered),
           [vertex](const Polygon & p) {
             return p.points.size() == vertex;
           });
-      } 
-      catch (...) {
+      } catch (...) {
         out << "<INVALID COMMAND>\n";
         return;
       }
@@ -118,7 +119,7 @@ namespace madieva
     }
   }
 
-void cmd_min(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
+  void cmd_min(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
   {
     std::string param;
     if (!(in >> param)) {
@@ -144,6 +145,23 @@ void cmd_min(std::istream & in, std::ostream & out, const std::vector< Polygon >
     } else {
       out << "<INVALID COMMAND>\n";
     }
+  }
+
+  void cmd_count(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
+  {
+    std::string param;
+    if (!(in >> param)) {
+      out << "<INVALID COMMAND>\n";
+      return;
+    }
+    std::vector<Polygon> filtered;
+    even_odd_num_filter(in, out, polygons, param, filtered);
+    out << filtered.size();
+  }
+
+  void cmd_same(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
+  {
+
   }
 
 }

@@ -1,10 +1,12 @@
 #include "polygon.hpp"
+#include "commands.hpp"
 #include <string>
 #include <fstream>
 #include <iterator>
 #include <iostream>
 #include <map>
 #include <functional>
+#include <limits>
 
 int main(int argc, char * argv[])
 {
@@ -26,9 +28,22 @@ int main(int argc, char * argv[])
     }),
     polygons.end()
   );
-  std::map < std::string, std::function< void(std::istream&, std::ostream&,
-    const std::vector< madieva::Polygon > polygons) > > constCommands;
-  std::map < std::string, std::function< void(std::istream&, std::ostream&,
-    std::vector< madieva::Polygon > polygons) > > nonConstCommands;
+  using Command = std::function< void(std::istream &, std::ostream &, const std::vector<madieva::Polygon> &) >;
+  std::map < std::string, Command > commands;
+  commands["AREA"] = madieva::cmd_area;
+  commands["MAX"] = madieva::cmd_max;
+  commands["MIN"] = madieva::cmd_min;
+  commands["COUNT"] = madieva::cmd_count;
+
+  std::string command_name;
+  while (std::cin >> command_name) {
+    auto it = commands.find(command_name);
+    if (it != commands.end()) {
+      it->second(std::cin, std::cout, polygons);
+    } else {
+      std::cout << "<INVALID COMMAND>\n";
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+  }
   return 0;
 }

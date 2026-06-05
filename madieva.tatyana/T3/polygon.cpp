@@ -43,7 +43,7 @@ namespace madieva
     if (!in) {
       in.clear();
       in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-      dest.points.clear(); 
+      dest.points.clear();
       return in;
     }
 
@@ -56,7 +56,7 @@ namespace madieva
     if (!in) {
       dest.points.clear();
       in.clear();
-      in.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Пропускаем остаток бракованной строки
+      in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
     return in;
   }
@@ -70,7 +70,7 @@ namespace madieva
   std::ostream & operator<<(std::ostream & out, const Polygon & dest)
   {
     out << dest.points.size() << " ";
-    std::copy(dest.points.begin(), dest.points.end(), 
+    std::copy(dest.points.begin(), dest.points.end(),
       std::ostream_iterator< Point >(out, " "));
     return out;
   }
