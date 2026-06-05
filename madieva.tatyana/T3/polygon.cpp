@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+#include <limits>
 #include <sstream>
 #include <string>
 
@@ -37,27 +38,25 @@ namespace madieva
     if (!sentry) {
       return in;
     }
-    std::string line;
-    std::getline(in, line);
-    if (line.empty()) {
-      return in;
-    }
-    std::istringstream iss(line);
     size_t vertexCount = 0;
-    iss >> vertexCount;
-    if (!iss) {
+    in >> vertexCount;
+    if (!in) {
+      in.clear();
+      in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      dest.points.clear(); 
       return in;
     }
+
     dest.points.clear();
-    dest.points.resize(vertexCount);
-    std::generate(dest.points.begin(), dest.points.end(), [&iss]()
-    {
+    std::generate_n(std::back_inserter(dest.points), vertexCount, [&in]() {
       Point p;
-      iss >> p;
+      in >> p;
       return p;
     });
-    if (!iss) {
+    if (!in) {
       dest.points.clear();
+      in.clear();
+      in.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Пропускаем остаток бракованной строки
     }
     return in;
   }
