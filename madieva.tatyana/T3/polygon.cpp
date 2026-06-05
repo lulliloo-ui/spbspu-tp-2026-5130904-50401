@@ -2,6 +2,8 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+#include <sstream>
+#include <string>
 
 namespace madieva
 {
@@ -35,20 +37,26 @@ namespace madieva
     if (!sentry) {
       return in;
     }
+    std::string line;
+    std::getline(in, line);
+    if (line.empty()) {
+      return in;
+    }
+    std::istringstream iss(line);
     size_t vertexCount = 0;
-    in >> vertexCount;
-    if (!in) {
+    iss >> vertexCount;
+    if (!iss) {
       return in;
     }
     dest.points.clear();
     dest.points.resize(vertexCount);
-    std::generate(dest.points.begin(), dest.points.end(), [&in]()
+    std::generate(dest.points.begin(), dest.points.end(), [&iss]()
     {
       Point p;
-      in >> p;
+      iss >> p;
       return p;
     });
-    if (!in) {
+    if (!iss) {
       dest.points.clear();
     }
     return in;
@@ -67,6 +75,5 @@ namespace madieva
       std::ostream_iterator< Point >(out, " "));
     return out;
   }
-
 
 }
