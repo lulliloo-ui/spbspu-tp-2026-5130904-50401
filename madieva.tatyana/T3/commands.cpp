@@ -33,14 +33,8 @@ namespace madieva
     return std::abs(sum) / 2.0;
   }
 
-  void cmd_area(std::istream & in, std::ostream & out, const std::vector< Polygon > polygons)
+  void even_odd_num_filter(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons, std::string param, std::vector<Polygon> & filtered)
   {
-    std::string param;
-    if (!(in >> param)) {
-      out << "<INVALID COMMAND>\n";
-      return;
-    }
-    std::vector<Polygon> filtered;
     if (param == "EVEN") {
       std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered), 
       [](const Polygon & p) {
@@ -51,12 +45,6 @@ namespace madieva
       [](const Polygon & p) {
         return p.points.size() % 2 != 0;
       });
-    } else if (param == "MEAN") {
-      if (polygons.empty()) {
-        out << "<INVALID COMMAND>\n";
-        return;
-      }
-      filtered = polygons;
     } else {
       try {
         size_t vertex = std::stoul(param);
@@ -70,6 +58,25 @@ namespace madieva
         return;
       }
     }
+  }
+
+  void cmd_area(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
+  {
+    std::string param;
+    if (!(in >> param)) {
+      out << "<INVALID COMMAND>\n";
+      return;
+    }
+    std::vector<Polygon> filtered;
+    if (param == "MEAN") {
+      if (polygons.empty()) {
+        out << "<INVALID COMMAND>\n";
+        return;
+      }
+      filtered = polygons;
+    } else {
+      even_odd_num_filter(in, out, polygons, param, filtered);
+    }
     std::vector< double > areas;
     areas.reserve(filtered.size());
     std::transform(filtered.begin(), filtered.end(), std::back_inserter(areas), getArea);
@@ -82,4 +89,61 @@ namespace madieva
       out << std::fixed << std::setprecision(1) << sum << "\n";
     }
   }
+
+  void cmd_max(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
+  {
+    std::string param;
+    if (!(in >> param)) {
+      out << "<INVALID COMMAND>\n";
+      return;
+    }
+    if (polygons.empty()) {
+      out << "<INVALID COMMAND>\n";
+      return;
+    }
+    if (param == "AREA") {
+      auto it = std::max_element(polygons.begin(), polygons.end(),
+        [](const Polygon & a, const Polygon & b) {
+          return getArea(a) < getArea(b);
+        });
+      out << std::fixed << std::setprecision(1) << getArea(*it) << "\n";
+    } else if (param == "VERTEXES") {
+      auto it = std::max_element(polygons.begin(), polygons.end(),
+        [](const Polygon & a, const Polygon & b) {
+          return a.points.size() < b.points.size();
+        });
+      out << it->points.size() << "\n";
+    } else {
+      out << "<INVALID COMMAND>\n";
+    }
+  }
+
+void cmd_min(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
+  {
+    std::string param;
+    if (!(in >> param)) {
+      out << "<INVALID COMMAND>\n";
+      return;
+    }
+    if (polygons.empty()) {
+      out << "<INVALID COMMAND>\n";
+      return;
+    }
+    if (param == "AREA") {
+      auto it = std::min_element(polygons.begin(), polygons.end(),
+        [](const Polygon & a, const Polygon & b) {
+          return getArea(a) < getArea(b);
+        });
+      out << std::fixed << std::setprecision(1) << getArea(*it) << "\n";
+    } else if (param == "VERTEXES") {
+      auto it = std::min_element(polygons.begin(), polygons.end(),
+        [](const Polygon & a, const Polygon & b) {
+          return a.points.size() < b.points.size();
+        });
+      out << it->points.size() << "\n";
+    } else {
+      out << "<INVALID COMMAND>\n";
+    }
+  }
+
 }
