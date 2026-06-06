@@ -73,6 +73,10 @@ namespace madieva
       out << "<INVALID COMMAND>\n";
       return;
     }
+    if (polygons.size() == 0) {
+      out << "<INVALID COMMAND>\n";
+      return;
+    }
     std::vector< Polygon > filtered;
     if (param == "MEAN") {
       if (polygons.empty()) {
@@ -159,6 +163,10 @@ namespace madieva
       out << "<INVALID COMMAND>\n";
       return;
     }
+    if (polygons.size() == 0) {
+      out << "<INVALID COMMAND>\n";
+      return;
+    }
     std::vector< Polygon > filtered;
     even_odd_num_filter(out, polygons, param, filtered);
     out << filtered.size() << "\n";
@@ -206,6 +214,10 @@ namespace madieva
     Polygon target;
     if (!(in >> target)) {
       out << "<INVALID COMMAND>\n";
+      return;
+    }
+    if (target.points.size() < 3 ) {
+      out << "<FALSE>\n";
       return;
     }
     if (polygons.empty()) {
