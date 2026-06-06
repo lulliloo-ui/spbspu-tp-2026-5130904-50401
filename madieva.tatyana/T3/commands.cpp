@@ -263,7 +263,7 @@ namespace madieva
     return a.y_max < b.y_max;
   }
 
-  void cmd_inframe(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
+  void cmdInframe(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
   {
     Polygon target;
     if (!(in >> target)) {
