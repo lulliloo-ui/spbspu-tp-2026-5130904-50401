@@ -38,7 +38,7 @@ namespace madieva
     return std::abs(sum) / 2.0;
   }
 
-  void even_odd_num_filter(std::istream & in, std::ostream & out,
+  void even_odd_num_filter(std::ostream & out,
     const std::vector< Polygon > & polygons, std::string param,
     std::vector< Polygon > & filtered)
   {
@@ -160,7 +160,7 @@ namespace madieva
       return;
     }
     std::vector< Polygon > filtered;
-    even_odd_num_filter(in, out, polygons, param, filtered);
+    even_odd_num_filter(out, polygons, param, filtered);
     out << filtered.size() << "\n";
   }
 
