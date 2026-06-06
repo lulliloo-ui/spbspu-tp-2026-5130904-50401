@@ -181,11 +181,11 @@ namespace madieva
   Frame getFrame(const Polygon & p)
   {
     Frame f;
-    auto result_x = std::minmax_element(p.points.begin(), p.points.end(), 
+    auto result_x = std::minmax_element(p.points.begin(), p.points.end(),
       [](const Point& a, const Point& b) {
         return a.x < b.x;
       });
-    auto result_y = std::minmax_element(p.points.begin(), p.points.end(), 
+    auto result_y = std::minmax_element(p.points.begin(), p.points.end(),
       [](const Point& a, const Point& b) {
         return a.y < b.y;
       });
@@ -207,19 +207,19 @@ namespace madieva
     std::vector< Frame > f;
     f.reserve(polygons.size());
     std::transform(polygons.begin(), polygons.end(), std::back_inserter(f), getFrame);
-    auto min_x = std::min_element(f.begin(), f.end(), 
+    auto min_x = std::min_element(f.begin(), f.end(),
       [](const Frame & a, const Frame & b) {
         return a.x_min < b.x_min;
       });
-    auto max_x = std::max_element(f.begin(), f.end(), 
+    auto max_x = std::max_element(f.begin(), f.end(),
       [](const Frame & a, const Frame & b) {
         return a.x_max < b.x_max;
       });
-    auto min_y = std::min_element(f.begin(), f.end(), 
+    auto min_y = std::min_element(f.begin(), f.end(),
       [](const Frame & a, const Frame & b) {
         return a.y_min < b.y_min;
       });
-    auto max_y = std::max_element(f.begin(), f.end(), 
+    auto max_y = std::max_element(f.begin(), f.end(),
       [](const Frame & a, const Frame & b) {
         return a.y_max < b.y_max;
       });

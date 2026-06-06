@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <iterator>
 #include <limits>
-#include <sstream>
 #include <string>
 
 namespace madieva
