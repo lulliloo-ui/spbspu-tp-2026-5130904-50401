@@ -10,7 +10,7 @@ namespace madieva
 {
   double getArea(const Polygon & polygon);
 
-  void even_odd_num_filter(std::istream & in, std::ostream & out,
+  void even_odd_num_filter(std::ostream & out,
     const std::vector< Polygon > & polygons, std::string param,
     std::vector< Polygon > & filtered);
 
