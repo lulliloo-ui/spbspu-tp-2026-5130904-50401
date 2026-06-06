@@ -38,11 +38,21 @@ namespace madieva
     return std::abs(sum) / 2.0;
   }
 
-  void even_odd_num_filter(std::ostream & out,
-    const std::vector< Polygon > & polygons, std::string param,
-    std::vector< Polygon > & filtered)
+  void cmd_area(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
   {
-    if (param == "EVEN") {
+    std::string param;
+    if (!(in >> param)) {
+      out << "<INVALID COMMAND>\n";
+      return;
+    }
+    std::vector< Polygon > filtered;
+    if (param == "MEAN") {
+      if (polygons.empty()) {
+        out << "<INVALID COMMAND>\n";
+        return;
+      }
+      filtered = polygons;
+    } else if (param == "EVEN") {
       std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered),
       [](const Polygon & p) {
         return p.points.size() % 2 == 0;
@@ -65,28 +75,6 @@ namespace madieva
           });
       } catch (...) {
         out << "<INVALID COMMAND>\n";
-        return;
-      }
-    }
-  }
-
-  void cmd_area(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
-  {
-    std::string param;
-    if (!(in >> param)) {
-      out << "<INVALID COMMAND>\n";
-      return;
-    }
-    std::vector< Polygon > filtered;
-    if (param == "MEAN") {
-      if (polygons.empty()) {
-        out << "<INVALID COMMAND>\n";
-        return;
-      }
-      filtered = polygons;
-    } else {
-      even_odd_num_filter(out, polygons, param, filtered);
-      if (filtered.size() < 3) {
         return;
       }
     }
@@ -167,9 +155,31 @@ namespace madieva
       return;
     }
     std::vector< Polygon > filtered;
-    even_odd_num_filter(out, polygons, param, filtered);
-    if (filtered.size() < 3) {
-      return;
+    if (param == "EVEN") {
+      std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered),
+      [](const Polygon & p) {
+        return p.points.size() % 2 == 0;
+      });
+    } else if (param == "ODD") {
+      std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered),
+      [](const Polygon & p) {
+        return p.points.size() % 2 != 0;
+      });
+    } else {
+      try {
+        size_t vertex = std::stoul(param);
+        if (vertex < 3) {
+          out << "<INVALID COMMAND>\n";
+          return;
+        }
+        std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered),
+          [vertex](const Polygon & p) {
+            return p.points.size() == vertex;
+          });
+      } catch (...) {
+        out << "<INVALID COMMAND>\n";
+        return;
+      }
     }
     out << filtered.size() << "\n";
   }
