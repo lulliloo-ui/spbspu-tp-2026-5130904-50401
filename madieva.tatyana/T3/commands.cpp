@@ -55,6 +55,10 @@ namespace madieva
     } else {
       try {
         size_t vertex = std::stoul(param);
+        if (vertex < 3) {
+          out << "<INVALID COMMAND>\n";
+          return;
+        }
         std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered),
           [vertex](const Polygon & p) {
             return p.points.size() == vertex;
@@ -70,10 +74,6 @@ namespace madieva
   {
     std::string param;
     if (!(in >> param)) {
-      out << "<INVALID COMMAND>\n";
-      return;
-    }
-    if (polygons.size() == 0) {
       out << "<INVALID COMMAND>\n";
       return;
     }
@@ -163,10 +163,6 @@ namespace madieva
       out << "<INVALID COMMAND>\n";
       return;
     }
-    if (polygons.size() == 0) {
-      out << "<INVALID COMMAND>\n";
-      return;
-    }
     std::vector< Polygon > filtered;
     even_odd_num_filter(out, polygons, param, filtered);
     out << filtered.size() << "\n";
@@ -176,6 +172,10 @@ namespace madieva
   {
     Polygon target;
     if (!(in >> target)) {
+      out << "<INVALID COMMAND>\n";
+      return;
+    }
+    if (target.points.size() < 3 ) {
       out << "<INVALID COMMAND>\n";
       return;
     }
@@ -217,7 +217,7 @@ namespace madieva
       return;
     }
     if (target.points.size() < 3 ) {
-      out << "<FALSE>\n";
+      out << "<INVALID COMMAND>\n";
       return;
     }
     if (polygons.empty()) {

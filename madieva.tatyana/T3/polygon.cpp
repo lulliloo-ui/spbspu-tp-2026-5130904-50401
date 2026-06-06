@@ -58,17 +58,19 @@ namespace madieva
     size_t vertexCount = 0;
     in >> vertexCount;
 
-    if (!in) {
+    if (!in || vertexCount < 3) {
       in.clear();
       in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
       dest.points.clear();
-      std::cout << "<INVALID COMMAND>\n";
       return in;
     }
-
     dest.points.clear();
     std::generate_n(std::back_inserter(dest.points), vertexCount, [&in]()
     {
+      char next_char = in.peek();
+      if (next_char == '\n') {
+        in.setstate(std::ios::failbit);
+      }
       Point p;
       in >> p;
       return p;
@@ -77,14 +79,13 @@ namespace madieva
       dest.points.clear();
       in.clear();
       in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
-      std::cout << "<INVALID COMMAND>\n";
+      return in;
     }
     char next_char = in.peek();
     if (next_char != '\n' && next_char != EOF) {
       dest.points.clear();
       in.clear();
       in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
-      std::cout << "<INVALID COMMAND>\n";
     }
     return in;
   }
