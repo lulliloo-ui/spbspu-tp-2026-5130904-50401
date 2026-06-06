@@ -1,11 +1,13 @@
-#include "polygon.hpp"
 #include "commands.hpp"
+#include "polygon.hpp"
 #include <algorithm>
 #include <numeric>
 #include <iostream>
 #include <iomanip>
 #include <functional>
 #include <limits>
+#include <cmath>
+#include <iterator>
 
 namespace madieva
 {
@@ -37,8 +39,8 @@ namespace madieva
   }
 
   void even_odd_num_filter(std::istream & in, std::ostream & out,
-    const std::vector< Polygon > & polygons,std::string param,
-    std::vector<Polygon> & filtered)
+    const std::vector< Polygon > & polygons, std::string param,
+    std::vector< Polygon > & filtered)
   {
     if (param == "EVEN") {
       std::copy_if(polygons.begin(), polygons.end(), std::back_inserter(filtered),
@@ -71,7 +73,7 @@ namespace madieva
       out << "<INVALID COMMAND>\n";
       return;
     }
-    std::vector<Polygon> filtered;
+    std::vector< Polygon > filtered;
     if (param == "MEAN") {
       if (polygons.empty()) {
         out << "<INVALID COMMAND>\n";
@@ -157,9 +159,9 @@ namespace madieva
       out << "<INVALID COMMAND>\n";
       return;
     }
-    std::vector<Polygon> filtered;
+    std::vector< Polygon > filtered;
     even_odd_num_filter(in, out, polygons, param, filtered);
-    out << filtered.size();
+    out << filtered.size() << "\n";
   }
 
   void cmd_same(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons)
@@ -182,11 +184,13 @@ namespace madieva
   {
     Frame f;
     auto result_x = std::minmax_element(p.points.begin(), p.points.end(),
-      [](const Point& a, const Point& b) {
+      [](const Point& a, const Point& b)
+      {
         return a.x < b.x;
       });
     auto result_y = std::minmax_element(p.points.begin(), p.points.end(),
-      [](const Point& a, const Point& b) {
+      [](const Point& a, const Point& b)
+      {
         return a.y < b.y;
       });
 
@@ -204,23 +208,31 @@ namespace madieva
       out << "<INVALID COMMAND>\n";
       return;
     }
+    if (polygons.empty()) {
+      out << "<FALSE>\n";
+      return;
+    }
     std::vector< Frame > f;
     f.reserve(polygons.size());
     std::transform(polygons.begin(), polygons.end(), std::back_inserter(f), getFrame);
     auto min_x = std::min_element(f.begin(), f.end(),
-      [](const Frame & a, const Frame & b) {
+      [](const Frame & a, const Frame & b)
+      {
         return a.x_min < b.x_min;
       });
     auto max_x = std::max_element(f.begin(), f.end(),
-      [](const Frame & a, const Frame & b) {
+      [](const Frame & a, const Frame & b)
+      {
         return a.x_max < b.x_max;
       });
     auto min_y = std::min_element(f.begin(), f.end(),
-      [](const Frame & a, const Frame & b) {
+      [](const Frame & a, const Frame & b)
+      {
         return a.y_min < b.y_min;
       });
     auto max_y = std::max_element(f.begin(), f.end(),
-      [](const Frame & a, const Frame & b) {
+      [](const Frame & a, const Frame & b)
+      {
         return a.y_max < b.y_max;
       });
     const Frame global_f {

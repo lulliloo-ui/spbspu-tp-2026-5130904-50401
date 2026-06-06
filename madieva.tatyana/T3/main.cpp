@@ -7,6 +7,7 @@
 #include <map>
 #include <functional>
 #include <limits>
+#include <algorithm>
 
 int main(int argc, char * argv[])
 {
@@ -16,6 +17,7 @@ int main(int argc, char * argv[])
   std::string file_name = argv[1];
   std::ifstream file(file_name);
   if (!file.is_open()) {
+    std::cerr << "Error: cannot open file\n";
     return 1;
   }
 
@@ -28,7 +30,7 @@ int main(int argc, char * argv[])
     }),
     polygons.end()
   );
-  using Command = std::function< void(std::istream &, std::ostream &, const std::vector<madieva::Polygon> &) >;
+  using Command = std::function< void(std::istream &, std::ostream &, const std::vector< madieva::Polygon > &) >;
   std::map < std::string, Command > commands;
   commands["AREA"] = madieva::cmd_area;
   commands["MAX"] = madieva::cmd_max;
@@ -44,7 +46,7 @@ int main(int argc, char * argv[])
       it->second(std::cin, std::cout, polygons);
     } else {
       std::cout << "<INVALID COMMAND>\n";
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
     }
   }
   return 0;

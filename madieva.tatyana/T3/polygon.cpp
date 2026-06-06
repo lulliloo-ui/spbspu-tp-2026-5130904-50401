@@ -59,13 +59,14 @@ namespace madieva
     in >> vertexCount;
     if (!in) {
       in.clear();
-      in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
       dest.points.clear();
       return in;
     }
 
     dest.points.clear();
-    std::generate_n(std::back_inserter(dest.points), vertexCount, [&in]() {
+    std::generate_n(std::back_inserter(dest.points), vertexCount, [&in]()
+    {
       Point p;
       in >> p;
       return p;
@@ -73,7 +74,7 @@ namespace madieva
     if (!in) {
       dest.points.clear();
       in.clear();
-      in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
     }
     return in;
   }

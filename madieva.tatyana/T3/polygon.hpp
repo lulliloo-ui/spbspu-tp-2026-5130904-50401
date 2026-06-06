@@ -4,7 +4,8 @@
 #include <vector>
 #include <iosfwd>
 
-namespace madieva {
+namespace madieva
+{
 
   struct DelimiterIO
   {
@@ -13,7 +14,8 @@ namespace madieva {
 
   struct Point
   {
-    int x, y;
+    int x;
+    int y;
   };
 
   struct Polygon
