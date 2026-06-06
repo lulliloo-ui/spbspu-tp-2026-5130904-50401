@@ -86,6 +86,9 @@ namespace madieva
       filtered = polygons;
     } else {
       even_odd_num_filter(out, polygons, param, filtered);
+      if (filtered.size() < 3) {
+        return;
+      }
     }
     std::vector< double > areas;
     areas.reserve(filtered.size());
@@ -165,6 +168,9 @@ namespace madieva
     }
     std::vector< Polygon > filtered;
     even_odd_num_filter(out, polygons, param, filtered);
+    if (filtered.size() < 3) {
+      return;
+    }
     out << filtered.size() << "\n";
   }
 
