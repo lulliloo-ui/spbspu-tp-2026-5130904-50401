@@ -4,9 +4,15 @@
 #include <iterator>
 #include <limits>
 #include <string>
+#include <functional>
 
 namespace madieva
 {
+  bool compare(const Point & a, const Point & b, int dx, int dy)
+  {
+    return a.x + dx == b.x && a.y + dy == b.y;
+  }
+
   bool Polygon::operator==(const Polygon & rhs) const
   {
     if (points.size() != rhs.points.size()) {
@@ -18,11 +24,11 @@ namespace madieva
 
     const int dx = rhs.points.front().x - points.front().x;
     const int dy = rhs.points.front().y - points.front().y;
-    return std::equal(points.begin(), points.end(), rhs.points.begin(),
-      [dx, dy](const Point & a, const Point & b)
-      {
-        return a.x + dx == b.x && a.y + dy == b.y;
-      });
+
+    using namespace std::placeholders;
+    auto comparator = std::bind(compare, _1, _2, dx, dy);
+
+    return std::equal(points.begin(), points.end(), rhs.points.begin(), comparator);
   }
 
   std::istream & operator>>(std::istream & in, DelimiterIO && dest)
@@ -49,6 +55,17 @@ namespace madieva
     return in;
   }
 
+  Point readPoint(std::istream & in)
+  {
+    char next_char = in.peek();
+    if (next_char == '\n') {
+      in.setstate(std::ios::failbit);
+    }
+    Point p;
+    in >> p;
+    return p;
+  }
+
   std::istream & operator>>(std::istream & in, Polygon & dest)
   {
     std::istream::sentry sentry(in);
@@ -65,16 +82,10 @@ namespace madieva
       return in;
     }
     dest.points.clear();
-    std::generate_n(std::back_inserter(dest.points), vertexCount, [&in]()
-    {
-      char next_char = in.peek();
-      if (next_char == '\n') {
-        in.setstate(std::ios::failbit);
-      }
-      Point p;
-      in >> p;
-      return p;
-    });
+
+    using namespace std::placeholders;
+    auto reader = std::bind(readPoint, std::ref(in));
+    std::generate_n(std::back_inserter(dest.points), vertexCount, reader);
     if (!in) {
       dest.points.clear();
       in.clear();

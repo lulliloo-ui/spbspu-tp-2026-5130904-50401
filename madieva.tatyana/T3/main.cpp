@@ -32,12 +32,12 @@ int main(int argc, char * argv[])
   );
   using Command = std::function< void(std::istream &, std::ostream &, const std::vector< madieva::Polygon > &) >;
   std::map < std::string, Command > commands;
-  commands["AREA"] = madieva::cmd_area;
-  commands["MAX"] = madieva::cmd_max;
-  commands["MIN"] = madieva::cmd_min;
-  commands["COUNT"] = madieva::cmd_count;
-  commands["SAME"] = madieva::cmd_same;
-  commands["INFRAME"] = madieva::cmd_inframe;
+  commands["AREA"] = madieva::cmdArea;
+  commands["MAX"] = madieva::cmdMax;
+  commands["MIN"] = madieva::cmdMin;
+  commands["COUNT"] = madieva::cmdCount;
+  commands["SAME"] = madieva::cmdSame;
+  commands["INFRAME"] = madieva::cmdInframe;
 
   std::string command_name;
   while (std::cin >> command_name) {

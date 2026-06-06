@@ -10,15 +10,15 @@ namespace madieva
 {
   double getArea(const Polygon & polygon);
 
-  void cmd_area(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
+  void cmdArea(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
 
-  void cmd_max(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
+  void cmdMax(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
 
-  void cmd_min(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
+  void cmdMin(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
 
-  void cmd_count(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
+  void cmdCount(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
 
-  void cmd_same(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
+  void cmdSame(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
 
   struct Frame {
     int x_min = std::numeric_limits< int >::max();
@@ -29,7 +29,7 @@ namespace madieva
 
   Frame getFrame(const Polygon & p);
 
-  void cmd_inframe(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
+  void cmdInframe(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
 
 }
 
