@@ -8,6 +8,24 @@
 
 namespace madieva
 {
+  bool Polygon::operator==(const Polygon & rhs) const
+  {
+    if (points.size() != rhs.points.size()) {
+      return false;
+    }
+    if (points.empty()) {
+      return true;
+    }
+
+    const int dx = rhs.points.front().x - points.front().x;
+    const int dy = rhs.points.front().y - points.front().y;
+    return std::equal(points.begin(), points.end(), rhs.points.begin(),
+      [dx, dy](const Point & a, const Point & b)
+      {
+        return a.x + dx == b.x && a.y + dy == b.y;
+      });
+  }
+
   std::istream & operator>>(std::istream & in, DelimiterIO && dest)
   {
     std::istream::sentry sentry(in);
@@ -74,5 +92,4 @@ namespace madieva
       std::ostream_iterator< Point >(out, " "));
     return out;
   }
-
 }

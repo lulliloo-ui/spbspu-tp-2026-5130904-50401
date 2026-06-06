@@ -18,6 +18,19 @@ namespace madieva
 
   void cmd_count(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
 
+  void cmd_same(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
+
+  struct Frame {
+    int x_min = std::numeric_limits< int >::max();
+    int x_max = std::numeric_limits< int >::min();
+    int y_min = std::numeric_limits< int >::max();
+    int y_max = std::numeric_limits< int >::min();
+  };
+
+  Frame getFrame(const Polygon & p);
+
+  void cmd_inframe(std::istream & in, std::ostream & out, const std::vector< Polygon > & polygons);
+
 }
 
 #endif

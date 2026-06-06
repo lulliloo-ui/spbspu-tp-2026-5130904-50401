@@ -34,6 +34,8 @@ int main(int argc, char * argv[])
   commands["MAX"] = madieva::cmd_max;
   commands["MIN"] = madieva::cmd_min;
   commands["COUNT"] = madieva::cmd_count;
+  commands["SAME"] = madieva::cmd_same;
+  commands["INFRAME"] = madieva::cmd_inframe;
 
   std::string command_name;
   while (std::cin >> command_name) {

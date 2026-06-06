@@ -19,6 +19,7 @@ namespace madieva {
   struct Polygon
   {
     std::vector< Point > points;
+    bool operator==(const Polygon & rhs) const;
   };
 
   std::istream & operator>>(std::istream & in, DelimiterIO && dest);
